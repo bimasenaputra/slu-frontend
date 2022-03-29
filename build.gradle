@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
+    id 'org.sonarqube' version '3.3'
 }
 
 group = 'id.ac.ui.cs.advprog'
@@ -45,6 +46,13 @@ test {
 
 jacocoTestReport {
     dependsOn test
+    reports {
+        xml.enabled true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.7"
 }
 
 tasks.named('test') {
