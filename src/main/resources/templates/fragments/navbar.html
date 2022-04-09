@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-md fixed-top bg-dark navbar-dark" style="height: 5em">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" th:href="@{/}">Scheduler with Logistic Utility</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a class="nav-link" th:href="@{/createAccount}">Register</a></li>
+
+            <li><a class="nav-link" th:href="@{/}">Login</a></li>
+
+        </ul>
+    </div>
+</nav>
+</body>
+</html>

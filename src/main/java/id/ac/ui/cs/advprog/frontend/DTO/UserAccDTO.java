@@ -1,4 +1,4 @@
-package id.ac.ui.cs.advprog.frontend;
+package id.ac.ui.cs.advprog.frontend.DTO;
 
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.*;

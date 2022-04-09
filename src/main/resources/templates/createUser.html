@@ -7,18 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 <body>
-<nav th:fragment="navbar" class="navbar navbar-expand-md fixed-top bg-dark navbar-dark" style="height: 5em">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" th:href="@{/}">Scheduler with Logistic Utility</a>
-        </div>
-        <ul class="nav navbar-nav">
-<!--            <li><a class="nav-link" th:href="@{/createUser}">Register</a></li>-->
-            <li><a class="nav-link" th:href="@{/}">Login</a></li>
-
-        </ul>
-    </div>
-</nav>
+<div th:replace="fragments/navbar.html :: navbar"></div>
 <div style="margin: 77px">
     <br>
 <h1 style="text-align: center">Create Account</h1>
