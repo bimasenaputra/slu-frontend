@@ -58,7 +58,7 @@ public class WebController {
         }
         catch (Exception ex) {
             model.addAttribute("user", new UserAccDTO());
-            model.addAttribute("taken", "Username \"" + dto.getUsername() + "\" is already in taken.");
+            model.addAttribute("taken", "Username \"" + dto.getUsername() + "\" is already taken.");
             return "createUser";
         }
 
