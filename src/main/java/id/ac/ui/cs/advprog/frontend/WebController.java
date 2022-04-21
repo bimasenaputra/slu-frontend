@@ -17,6 +17,11 @@ public class WebController {
         return "home";
     }
 
+    @GetMapping("/calendar")
+    public String getCalendar(Model model) {
+        return "calendar";
+    }
+
     @PostMapping("/")
     public String postHome(@ModelAttribute UserLoginDTO dto) {
         // TODO: Handle login

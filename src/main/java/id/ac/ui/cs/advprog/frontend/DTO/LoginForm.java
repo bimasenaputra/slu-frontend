@@ -3,20 +3,14 @@ package id.ac.ui.cs.advprog.frontend.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserAccDTO {
-    @NotNull
-    private String firstName;
-    @NotNull
-    private String lastName;
+public class LoginForm {
     @NotNull
     private String username;
-    @NotNull
-    private String email;
     @NotNull
     private String password;
 }
