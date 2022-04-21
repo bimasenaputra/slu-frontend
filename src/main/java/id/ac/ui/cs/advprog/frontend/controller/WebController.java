@@ -130,4 +130,16 @@ public class WebController {
         model.addAttribute("taken", "Username \"" + dto.getUsername() + "\" and email \"" + dto.getEmail()  + "\" are already in use.");
         return "createUser";
     }
+
+    @GetMapping("/calendar")
+    public String getCalendar(Model model) {
+        return "calendar";
+    }
+
+    @PostMapping("/logout")
+    public String logout() {
+        token.setRefreshToken(null);
+        token.setIdToken(null);
+        return "redirect:/" ;
+    }
 }
