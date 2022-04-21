@@ -19,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -26,7 +27,7 @@ public class WebController {
     @Resource(name = "sessionToken")
     private JWTToken token;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Autowired
     public WebController(RestTemplateBuilder builder) {
@@ -39,31 +40,44 @@ public class WebController {
             return getAuthenticatedHome();
         } catch (HttpClientErrorException e) {
             if (!token.refreshTokenIsEmpty()) {
-                // TODO: implement re-authentication / refresh token rotation
-                return getAuthenticatedHome();
+                try {
+                    // TODO: implement re-authentication / refresh token rotation
+                    return getAuthenticatedHome();
+                } catch (HttpClientErrorException ex) {
+                    Map<String, String> message = new HashMap<>();
+                    message.put("message", e.getResponseBodyAsString());
+                    message.put("code", e.getStatusCode().toString());
+                    return getUnauthenticatedHome(model, message);
+                }
             }
-            return getUnauthenticatedHome(model);
+            Map<String, String> message = new HashMap<>();
+            message.put("message", e.getResponseBodyAsString());
+            message.put("code", e.getStatusCode().toString());
+            return getUnauthenticatedHome(model, message);
         }
     }
+
 
     @SuppressWarnings("unchecked")
-    @PostMapping("/auth/login")
-    public String postLogin(@ModelAttribute("user") LoginForm dto) {
+    @PostMapping("/login")
+    public String postLogin(@ModelAttribute("user") LoginForm dto, Model model) {
         HttpHeaders headers = HttpHeadersBuilder.build();
         HttpEntity<LoginForm> request = new HttpEntity<>(dto, headers);
-        var response = restTemplate.postForEntity("api/account/auth/login/test",request,(Class<Map<String,Object>>)(Class)Map.class);
         try {
+            var response = restTemplate.postForEntity("api/account/auth/login/test",request,(Class<Map<String,Object>>)(Class)Map.class);
             token.setToken(CookieExtractor.extract(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)));
             return "redirect:/";
-        } catch (NullPointerException e) {
-            // TODO: Handle invalid email/password/timeout
-            return "test";
+        } catch (HttpClientErrorException e) {
+            Map<String, String> message = new HashMap<>();
+            message.put("message", e.getResponseBodyAsString());
+            message.put("code", e.getStatusCode().toString());
+            return getUnauthenticatedHome(model, message);
         }
     }
 
-    private String getUnauthenticatedHome(Model model) {
+    private String getUnauthenticatedHome(Model model, Map<String, String> message) {
         model.addAttribute("user", new LoginForm());
-        model.addAttribute("taken", null);
+        if (!message.get("code").equals("403 FORBIDDEN")) model.addAttribute(message);
         return "home";
     }
 
@@ -71,8 +85,7 @@ public class WebController {
         HttpHeaders headers = HttpHeadersBuilder.build();
         if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
         HttpEntity<String> request = new HttpEntity<>("Success",headers);
-        var response = restTemplate.postForEntity("api/account/auth/logout",request,String.class);
-        System.out.println(response.getBody());
+        var response = restTemplate.postForEntity("api/schedule/test",request,String.class);
         return "calendar";
     }
 
