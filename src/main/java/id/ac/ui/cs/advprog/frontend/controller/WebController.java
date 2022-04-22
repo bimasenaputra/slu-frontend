@@ -41,7 +41,12 @@ public class WebController {
         } catch (HttpClientErrorException e) {
             if (!token.refreshTokenIsEmpty()) {
                 try {
-                    // TODO: implement re-authentication / refresh token rotation
+                    HttpHeaders headers = HttpHeadersBuilder.build();
+                    headers.set(HttpHeaders.COOKIE, token.getCookieRefresh());
+                    HttpEntity<String> request = new HttpEntity<>("refreshToken", headers);
+                    @SuppressWarnings("unchecked")
+                    var response = restTemplate.postForEntity("api/account/refresh",request,(Class<Map<String,Object>>)(Class)Map.class);
+                    token.setToken(CookieExtractor.extract(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)));
                     return getAuthenticatedHome();
                 } catch (HttpClientErrorException ex) {
                     Map<String, String> message = new HashMap<>();
@@ -58,13 +63,13 @@ public class WebController {
     }
 
 
-    @SuppressWarnings("unchecked")
     @PostMapping("/login")
     public String postLogin(@ModelAttribute("user") LoginForm dto, Model model) {
         HttpHeaders headers = HttpHeadersBuilder.build();
         HttpEntity<LoginForm> request = new HttpEntity<>(dto, headers);
         try {
-            var response = restTemplate.postForEntity("api/account/auth/login/test",request,(Class<Map<String,Object>>)(Class)Map.class);
+            @SuppressWarnings("unchecked")
+            var response = restTemplate.postForEntity("api/account/auth/login",request,(Class<Map<String,Object>>)(Class)Map.class);
             token.setToken(CookieExtractor.extract(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)));
             return "redirect:/";
         } catch (HttpClientErrorException e) {
@@ -77,7 +82,11 @@ public class WebController {
 
     private String getUnauthenticatedHome(Model model, Map<String, String> message) {
         model.addAttribute("user", new LoginForm());
-        if (!message.get("code").equals("403 FORBIDDEN")) model.addAttribute(message);
+        if (!message.get("code").equals("403 FORBIDDEN")) {
+            var error = message.get("message").split("\"");
+            model.addAttribute("taken", error[3]);
+            model.addAttribute(message);
+        }
         return "home";
     }
 
