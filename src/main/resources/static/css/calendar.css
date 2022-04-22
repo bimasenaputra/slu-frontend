@@ -88,11 +88,11 @@ button {
     flex-direction: column;
 }
 
-#container-button {
+.container-button {
     margin-top: 20px;
     margin-right: 20px;
 }
-#container-button-calendar{
+.container-button-calendar{
     display: flex;
     margin-top: 44px;
 }
