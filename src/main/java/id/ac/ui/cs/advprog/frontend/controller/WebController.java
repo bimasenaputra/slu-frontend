@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -96,38 +96,24 @@ public class WebController {
     }
 
     @PostMapping("/createAccount")
-    public String createUserPost(@ModelAttribute UserAccDTO dto, Model model) {
-        RestTemplate restTemplate = new RestTemplate();
-        String urlusername = "http://localhost:8081/api/account/getUser/";
-        String urluemail = "http://localhost:8081/api/account/getUserByEmail/";
-        ResponseEntity<String> response = null;
+    public String createUserPost(@ModelAttribute UserAccDTO dto, Model model, RedirectAttributes redirectAttributes) {
+        HttpHeaders headers = HttpHeadersBuilder.build();
+        HttpEntity<UserAccDTO> request = new HttpEntity<>(dto, headers);
         try {
-            response = restTemplate.getForEntity(urlusername + dto.getUsername(), String.class);
-        } catch (Exception e) {
-            try {
-                response = restTemplate.getForEntity(urluemail + dto.getEmail(), String.class);
-            }
-            catch (Exception ex) {
-                // TODO: Handle register
-                model.addAttribute("user", new LoginForm());
-                return "home";
-            }
-            model.addAttribute("user", new UserAccDTO());
-            model.addAttribute("taken", "\"" + dto.getEmail() + "\" is already in use.");
-            return "createUser";
+            var response = restTemplate.postForEntity("api/account/auth/register", request, (Class<Map<String, Object>>) (Class) Map.class);
+            redirectAttributes.addFlashAttribute("reg", "Register berhasil, silahkan login.");
+            return "redirect:/";
+        } catch (HttpClientErrorException e) {
+            Map<String, String> message = new HashMap<>();
+            message.put("message", e.getResponseBodyAsString());
+            return failedRegister(model, message);
         }
+    }
 
-        try {
-            response = restTemplate.getForEntity(urluemail + dto.getEmail(), String.class);
-        }
-        catch (Exception ex) {
-            model.addAttribute("user", new UserAccDTO());
-            model.addAttribute("taken", "Username \"" + dto.getUsername() + "\" is already taken.");
-            return "createUser";
-        }
-
+    public String failedRegister(Model model, Map<String, String> error) {
         model.addAttribute("user", new UserAccDTO());
-        model.addAttribute("taken", "Username \"" + dto.getUsername() + "\" and email \"" + dto.getEmail()  + "\" are already in use.");
+        var errornya = error.get("message").split("\"");
+        model.addAttribute("taken", errornya[3]);
         return "createUser";
     }
 
@@ -136,10 +122,10 @@ public class WebController {
         return "calendar";
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public String logout() {
         token.setRefreshToken(null);
         token.setIdToken(null);
-        return "redirect:/" ;
+        return "redirect:/";
     }
 }

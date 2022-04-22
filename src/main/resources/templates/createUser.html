@@ -18,9 +18,7 @@
     <br>
 <h1 class="= display-5 fw-bold ls-tight" style="color: white; text-align: center">Create Account</h1>
 <br>
-    <div th:if="${taken} != null">
-    <div class="alert alert-danger" role="alert" th:text="${taken}">
-    </div>
+    <div class="alert alert-danger" role="alert" th:if="${taken}" th:text="${taken}">
     </div>
 <form th:action="@{/createAccount}" th:object="${user}" method="POST">
     <div class="card bg-glass">
