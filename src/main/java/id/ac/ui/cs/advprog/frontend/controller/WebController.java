@@ -101,7 +101,7 @@ public class WebController {
         HttpEntity<UserAccDTO> request = new HttpEntity<>(dto, headers);
         try {
             var response = restTemplate.postForEntity("api/account/auth/register", request, (Class<Map<String, Object>>) (Class) Map.class);
-            redirectAttributes.addFlashAttribute("reg", "Register berhasil, silahkan login.");
+            redirectAttributes.addFlashAttribute("reg", "Account registered successfully. Please login here.");
             return "redirect:/";
         } catch (HttpClientErrorException e) {
             Map<String, String> message = new HashMap<>();
