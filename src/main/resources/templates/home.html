@@ -32,6 +32,8 @@
 
                 <div class="card bg-glass">
                     <div class="card-body px-4 py-5 px-md-5">
+                        <div class="alert alert-success" role="alert" th:if="${reg}" th:text="${reg}">
+                        </div>
                         <form th:action="@{/login}" th:object="${user}" method="post">
 
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
