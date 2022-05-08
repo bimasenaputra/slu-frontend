@@ -1,6 +1,7 @@
 package id.ac.ui.cs.advprog.frontend.controller;
 
 import id.ac.ui.cs.advprog.frontend.dto.JWTToken;
+import id.ac.ui.cs.advprog.frontend.dto.ScheduleDTO;
 import id.ac.ui.cs.advprog.frontend.dto.UserAccDTO;
 import id.ac.ui.cs.advprog.frontend.dto.LoginForm;
 import id.ac.ui.cs.advprog.frontend.util.CookieExtractor;
@@ -135,6 +136,22 @@ public class WebController {
     public String logout() {
         token.setRefreshToken(null);
         token.setIdToken(null);
+        return "redirect:/";
+    }
+
+    @GetMapping("/createSchedule")
+    public String createSchedule(Model model) {
+        model.addAttribute("sched", new ScheduleDTO());
+        return "createSchedule";
+    }
+
+    @PostMapping("/createSchedule")
+    public String createSchedulePost(@ModelAttribute ScheduleDTO dto, Model model) {
+        HttpHeaders headers = HttpHeadersBuilder.build();
+        if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
+        HttpEntity<ScheduleDTO> request = new HttpEntity<>(dto, headers);
+        System.out.println(dto.getStartTime());
+        var response = restTemplate.postForEntity("api/schedule/createSchedule", request, Map.class);
         return "redirect:/";
     }
 }
