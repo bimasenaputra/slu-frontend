@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -37,29 +39,36 @@ public class WebController {
 
     @GetMapping("/")
     public String getHome(Model model) {
-        try {
-            return getAuthenticatedHome();
-        } catch (HttpClientErrorException e) {
-            if (!token.refreshTokenIsEmpty()) {
-                try {
-                    HttpHeaders headers = HttpHeadersBuilder.build();
-                    headers.set(HttpHeaders.COOKIE, token.getCookieRefresh());
-                    HttpEntity<String> request = new HttpEntity<>("refreshToken", headers);
-                    @SuppressWarnings("unchecked")
-                    var response = restTemplate.postForEntity("api/account/refresh",request,(Class<Map<String,Object>>)(Class)Map.class);
-                    token.setToken(CookieExtractor.extract(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)));
-                    return getAuthenticatedHome();
-                } catch (HttpClientErrorException ex) {
+        if (token.idTokenIsEmpty()) {
+            Map<String, String> message = new HashMap<>();
+            message.put("code", "403 FORBIDDEN");
+            return getUnauthenticatedHome(model, message);
+        } else {
+            try {
+                return getAuthenticatedHome();
+            } catch (HttpClientErrorException e) {
+                if (!token.refreshTokenIsEmpty()) {
+                    try {
+                        HttpHeaders headers = HttpHeadersBuilder.build();
+                        headers.set(HttpHeaders.COOKIE, token.getCookieRefresh());
+                        HttpEntity<String> request = new HttpEntity<>("refreshToken", headers);
+                        @SuppressWarnings("unchecked")
+                        var response = restTemplate.postForEntity("api/account/refresh",request,(Class<Map<String,Object>>)(Class)Map.class);
+                        token.setToken(CookieExtractor.extract(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)));
+                        return getAuthenticatedHome();
+                    } catch (HttpClientErrorException ex) {
+                        Map<String, String> message = new HashMap<>();
+                        message.put("message", e.getResponseBodyAsString());
+                        message.put("code", e.getStatusCode().toString());
+                        return getUnauthenticatedHome(model, message);
+                    }
+                } else {
                     Map<String, String> message = new HashMap<>();
                     message.put("message", e.getResponseBodyAsString());
                     message.put("code", e.getStatusCode().toString());
                     return getUnauthenticatedHome(model, message);
                 }
             }
-            Map<String, String> message = new HashMap<>();
-            message.put("message", e.getResponseBodyAsString());
-            message.put("code", e.getStatusCode().toString());
-            return getUnauthenticatedHome(model, message);
         }
     }
 
@@ -146,12 +155,50 @@ public class WebController {
     }
 
     @PostMapping("/createSchedule")
-    public String createSchedulePost(@ModelAttribute ScheduleDTO dto, Model model) {
+    public String createSchedulePost(@ModelAttribute ScheduleDTO dto) {
         HttpHeaders headers = HttpHeadersBuilder.build();
         if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
         HttpEntity<ScheduleDTO> request = new HttpEntity<>(dto, headers);
         System.out.println(dto.getStartTime());
         var response = restTemplate.postForEntity("api/schedule/createSchedule", request, Map.class);
         return "redirect:/";
+    }
+
+    @GetMapping("/schedule/{id}")
+    public String getSchedule(@PathVariable String id, Model model) {
+        HttpHeaders headers = HttpHeadersBuilder.build();
+        if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        try {
+            @SuppressWarnings("unchecked")
+            var response = restTemplate.exchange("api/schedule/"+id, HttpMethod.GET, request,(Class<Map<String,Object>>)(Class)Map.class).getBody();
+            var schedule = new ScheduleDTO();
+            assert response != null;
+            schedule.setTitle(response.get("title").toString());
+            schedule.setStartTime(response.get("startTime").toString());
+            schedule.setEndTime(response.get("endTime").toString());
+            schedule.setStartingLoc(response.get("startingLoc").toString());
+            schedule.setDestination(response.get("destination").toString());
+            schedule.setDesc(response.get("desc").toString());
+            model.addAttribute("schedule", schedule);
+            model.addAttribute("id", response.get("id").toString());
+            return "readSchedule";
+        } catch (HttpClientErrorException | NullPointerException e) {
+            System.out.println(e.getMessage());
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("/schedule/{id}/delete")
+    public String deleteSchedule(@PathVariable String id, @ModelAttribute("schedule") ScheduleDTO schedule) {
+        HttpHeaders headers = HttpHeadersBuilder.build();
+        if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
+        HttpEntity<ScheduleDTO> request = new HttpEntity<>(schedule, headers);
+        try {
+            restTemplate.exchange("api/schedule/"+id, HttpMethod.DELETE, request, Void.class);
+            return "redirect:/";
+        } catch (HttpClientErrorException e) {
+            return "redirect:/";
+        }
     }
 }
