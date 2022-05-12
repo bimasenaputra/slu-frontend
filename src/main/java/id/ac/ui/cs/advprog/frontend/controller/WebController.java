@@ -201,4 +201,40 @@ public class WebController {
             return "redirect:/";
         }
     }
+
+    @GetMapping("/schedule/{id}/update")
+    public String updateSchedule(@PathVariable String id, Model model) {
+        HttpHeaders headers = HttpHeadersBuilder.build();
+        if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
+        HttpEntity<ScheduleDTO> request = new HttpEntity<>(headers);
+        try {
+            var response = restTemplate.exchange("api/schedule/"+id, HttpMethod.GET, request,(Class<Map<String,Object>>)(Class)Map.class).getBody();
+            var schedule = new ScheduleDTO();
+            assert response != null;
+            schedule.setTitle(response.get("title").toString());
+            schedule.setStartTime(response.get("startTime").toString());
+            schedule.setEndTime(response.get("endTime").toString());
+            schedule.setStartingLoc(response.get("startingLoc").toString());
+            schedule.setDestination(response.get("destination").toString());
+            schedule.setDesc(response.get("desc").toString());
+            model.addAttribute("schedule", schedule);
+            model.addAttribute("id", response.get("id").toString());
+            return "updateSchedule";
+        } catch (HttpClientErrorException e) {
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("/schedule/{id}/update")
+    public String updateSchedulePost(@PathVariable String id, @ModelAttribute("schedule") ScheduleDTO schedule) {
+        HttpHeaders headers = HttpHeadersBuilder.build();
+        if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
+        HttpEntity<ScheduleDTO> request = new HttpEntity<>(schedule, headers);
+        try {
+            restTemplate.exchange("api/schedule/"+id, HttpMethod.PUT, request, Void.class);
+            return "redirect:/";
+        } catch (HttpClientErrorException e) {
+            return "redirect:/";
+        }
+    }
 }
