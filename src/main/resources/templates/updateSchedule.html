@@ -55,6 +55,27 @@
                         <label>Description/Note</label>
                         <input th:field="*{desc}" class="form-control" id="deskripsi"/>
                     </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="travel-mode" class="col-form-label">Travel Mode</label>
+                                <select class="form-select" id="travel-mode">
+                                    <option value="driving">Driving</option>
+                                    <option value="walking">Walking</option>
+                                    <option value="bicycling">Bicycling</option>
+                                </select>
+                            </div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <input class="form-control" id="result" placeholder="Kalkulasi Waktu Perjalanan" disabled/>
+                            </div></div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <input class="btn btn-primary" value="Calculate" onclick="calculateTime()"/>
+                            </div></div>
+                    </div>
                     <br>
                     <button type="submit" class="btn btn-primary">Update Schedule</button>
                 </div>
@@ -62,27 +83,8 @@
         </form>
     </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABJ-JBAOWen1mJ6f7_-AsrRvhFu-43KWg&libraries=places&callback=initAutocomplete" async defer></script>
-    <script>
-        let autocompletestart;
-        let autocompletedest;
-        function initAutocomplete() {
-            autocompletestart = new google.maps.places.Autocomplete(
-                document.getElementById('startingloc'),
-                {
-                    types: ['establishment'],
-                    componentRestrictions: {'country': ['IDN']},
-                    fields: ['places_id', 'geometry', 'name']
-                });
-
-            autocompletedest = new google.maps.places.Autocomplete(
-                document.getElementById('destination'),
-                {
-                    types: ['establishment'],
-                    componentRestrictions: {'country': ['IDN']},
-                    fields: ['places_id', 'geometry', 'name']
-                });
-        }
-    </script>
+    <script type="text/javascript" th:src="@{/js/googleMapAutoComplete.js}"></script>
+    <script type="text/javascript" th:src="@{/js/googleMapTravelMethod.js}"></script>
     </body>
 </main>
 </html>
