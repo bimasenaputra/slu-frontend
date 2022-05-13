@@ -20,6 +20,8 @@
 		<br>
 		<h1 class="= display-5 fw-bold ls-tight" style="color: white; text-align: center">Create Schedule</h1>
 		<br>
+		<div class="alert alert-danger" role="alert" th:if="${date}" th:text="${date}">
+		</div>
 		<form th:action="@{/createSchedule}" th:object="${sched}" method="POST">
 			<div class="card bg-glass">
 				<div class="card-body px-4 py-4 px-md-5">

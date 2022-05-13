@@ -150,16 +150,32 @@ public class WebController {
 
     @GetMapping("/createSchedule")
     public String createSchedule(Model model) {
+        if (token.idTokenIsEmpty())
+            return "redirect:/";
         model.addAttribute("sched", new ScheduleDTO());
         return "createSchedule";
     }
 
     @PostMapping("/createSchedule")
-    public String createSchedulePost(@ModelAttribute ScheduleDTO dto) {
+    public String createSchedulePost(@ModelAttribute ScheduleDTO dto, RedirectAttributes redirectAttributes) {
         HttpHeaders headers = HttpHeadersBuilder.build();
+
         if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
         HttpEntity<ScheduleDTO> request = new HttpEntity<>(dto, headers);
-        System.out.println(dto.getStartTime());
+
+        if (dto.getStartTime().compareTo(dto.getEndTime()) > 0) {
+            redirectAttributes.addFlashAttribute("date", "Start time must be earlier than end time, please try again.");
+            return "redirect:/createSchedule";
+        }
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        var checkStartTime = restTemplate.exchange(
+                "api/schedule/checkSchedTime/" + dto.getStartTime(), HttpMethod.GET, requestEntity, Boolean.class);
+        if (!checkStartTime.getBody()) {
+            redirectAttributes.addFlashAttribute("date", "You already have a schedule with that start time, please try again.");
+            return "redirect:/createSchedule";
+        }
+
         var response = restTemplate.postForEntity("api/schedule/createSchedule", request, Map.class);
         return "redirect:/";
     }
