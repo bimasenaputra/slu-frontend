@@ -106,3 +106,13 @@ button {
 .btn-create:hover{
     background-color: #e8faed;
 }
+
+.event {
+    font-size: 10px;
+    padding: 3px;
+    background-color: #58bae4;
+    color: white;
+    border-radius: 5px;
+    max-height: 55px;
+    overflow: hidden;
+}

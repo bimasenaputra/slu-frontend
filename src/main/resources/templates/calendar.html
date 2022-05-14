@@ -33,6 +33,14 @@
                 <div id="calendar"></div>
             </div>
         </div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var schedules = /*[[${schedules}]]*/ 'default';
+    console.log(schedules);
+
+    /*]]>*/
+</script>
 <script type="text/javascript" th:src="@{/js/calendar.js}"></script>
 </body>
 </html>
