@@ -30,28 +30,34 @@ function load() {
 
     calendar.innerHTML = '';
 
+
     for(let i = 1; i <= paddingDays + daysInMonth; i++) {
         const daySquare = document.createElement('div');
         daySquare.classList.add('day');
 
-        const dayString = `${month + 1}/${i - paddingDays}/${year}`;
-
         if (i > paddingDays) {
-            daySquare.innerText = i - paddingDays;
-            const eventForDay = events.find(e => e.date === dayString);
+
+            let curr_date = new Date(year, month, i - paddingDays + 1);
+            let dayString = curr_date.toISOString().split('T')[0];
+
+            daySquare.innerText = (i - paddingDays).toString();
 
             if (i - paddingDays === day && nav === 0) {
                 daySquare.id = 'currentDay';
             }
 
-            if (eventForDay) {
-                const eventDiv = document.createElement('div');
-                eventDiv.classList.add('event');
-                eventDiv.innerText = eventForDay.title;
-                daySquare.appendChild(eventDiv);
-            }
+            schedules.forEach(el => {
+                if (el['startTime'].split('T')[0] === dayString) {
+                    const link = document.createElement('a');
+                    link.setAttribute('href', '/schedule/'+el['id']);
+                    const eventDiv = document.createElement('div');
+                    eventDiv.classList.add('event');
+                    eventDiv.innerText = el['title'];
+                    link.appendChild(eventDiv);
+                    daySquare.appendChild(link);
+                }
+            });
 
-            daySquare.addEventListener('click', () => openModal(dayString));
         } else {
             daySquare.classList.add('padding');
         }

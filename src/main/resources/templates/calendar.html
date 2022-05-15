@@ -10,7 +10,7 @@
 <div th:replace="fragments/navbarCalendar.html :: navbar"></div>
         <div class ="container-button-calendar">
             <div class = "container-button">
-                <button type="button" class="btn btn-create">Create</button>
+                <a type="button" class="btn btn-create" th:href="@{/createSchedule}">Create</a>
             </div>
             <div class="gap"></div>
             <div id="container">
@@ -33,6 +33,14 @@
                 <div id="calendar"></div>
             </div>
         </div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var schedules = /*[[${schedules}]]*/ 'default';
+    console.log(schedules);
+
+    /*]]>*/
+</script>
 <script type="text/javascript" th:src="@{/js/calendar.js}"></script>
 </body>
 </html>
