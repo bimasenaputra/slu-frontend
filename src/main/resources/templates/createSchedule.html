@@ -48,7 +48,7 @@
 							</div></div>
 					</div>
 					<br>
-					<button data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-primary" th:align="center">Get Departure Time Recommendation</button>
+					<button type="button" data-bs-toggle="modal" data-bs-target="#depRecModal" class="btn btn-primary" th:align="center">Get Departure Time Recommendation</button>
 					<br>
 					<br>
 					<div class="form-group">
@@ -82,11 +82,11 @@
 			</div>
 		</form>
 
-		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal fade" id="depRecModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="deleteModalLabel">Departure Recommendation</h5>
+						<h5 class="modal-title" id="depRecModalLabel">Departure Recommendation</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
@@ -101,17 +101,17 @@
 							<div class="col">
 								<div class="form-group">
 									<label>Day</label>
-									<input type="number" class="form-control" id="day"/>
+									<input type="text" class="form-control" id="day" placeholder="0"/>
 								</div></div>
 							<div class="col">
 								<div class="form-group">
 									<label>Hour</label>
-									<input type="number" class="form-control" id="hour"/>
+									<input type="text" class="form-control" id="hour" placeholder="0"/>
 								</div></div>
 							<div class="col">
 								<div class="form-group">
 									<label>Minute</label>
-									<input type="number"class="form-control" id="minute"/>
+									<input type="text" class="form-control" id="minute" placeholder="0"/>
 								</div></div>
 						</div>
 						<br>
@@ -148,7 +148,7 @@
 
 						<div class="row">
 							<div class="form-group">
-								<input class="form-control" id="errormsg" placeholder="Click 'Save' to save the departure recommendation result" disabled/>
+								<input class="form-control" id="errormsg" placeholder="Click 'Save' to use the departure recommendation result" disabled/>
 							</div>
 						</div>
 

@@ -3,15 +3,25 @@ function calculateDepartureTime() {
     var destination = document.getElementById("destination").value;
     var startTime = document.getElementById("arrivaltime").value;
     var error = document.getElementById("errormsg");
+    var day = document.getElementById("day").value;
+    var hour = document.getElementById("hour").value;
+    var minute = document.getElementById("minute").value;
 
     if(startingLoc === "" || destination === "") {
         error.value = "Please fill out Origin and Destination field";
         return;
     } if (startTime === ""){
-        error.value = "Please fill out Arrival Time";
+        error.value = "Please fill out Arrival Time field";
         return;
-    } else
-        error.value = "Click 'Save' to save the departure recommendation result";
+    } if (isNaN(day) || isNaN(hour) || isNaN(minute))  {
+        error.value = "Please fill out Activity Duration field correctly";
+        return;
+    } if (day.split(' ').join('') === "" || hour.split(' ').join('') === "" || minute.split(' ').join('') === ""){
+        error.value = "Please fill out Activity Duration field";
+        return;
+    }
+    else
+        error.value = "Click 'Save' to use the departure recommendation result";
 
     var travelMode;
     var selectedTravelMode = document.getElementById("travel-mode-deptrec").value;
