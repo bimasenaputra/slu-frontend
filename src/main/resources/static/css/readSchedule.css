@@ -312,3 +312,7 @@ body {
 
     .steps {
         display: none; } }
+
+body {
+    padding-top: 65px;
+}
