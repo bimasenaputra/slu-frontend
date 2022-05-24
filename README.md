@@ -20,17 +20,21 @@ yang dapat memperhitungkan penggunaan waktu yang dibutuhkan pada aktivitas terse
 4. Nahda Amalia (2006597935)
 
 ### What's new
-1. Register:
-    - Guest dapat melakukan registrasi akun untuk melakukan login.
-2. Login:
-    - Setelah melalui proses registrasi, pengguna dapat melakukan login untuk melihat main page yang berupa calendar.
-3. Logout:
-    - Pengguna yang sudah melakukan registrasi dan login dapat melakukan logout.
-4. Calendar:
-    - Pengguna yang sudah login dapat melihat calendar (pada main page) yang nantinya akan berisi schedule pengguna tersebut.
+1. Register (Sprint 1)
+   - Guest dapat melakukan registrasi akun untuk melakukan login.
+2. Login (Sprint 1)
+   - Setelah melalui proses registrasi, pengguna dapat melakukan login untuk melihat main page yang berupa calendar.
+3. Logout (Sprint 1)
+   - Pengguna yang sudah melakukan registrasi dan login dapat melakukan logout.
+4. Calendar (Sprint 1)
+   - Pengguna yang sudah login dapat melihat calendar (pada main page) yang nantinya akan berisi schedule pengguna tersebut.
+5. Scheduler (Sprint 2)
+   - User dapat menambahkan, melihat, mengubah, dan menghapus schedule.
+6. Traveling Method (Sprint 2)
+   - User dapat memilih traveling method untuk mendukung kalkulasi waktu perjalanan.
 
-### Upcoming Features (Sprint 2)
-1. Scheduler
-    - User dapat menambahkan, melihat, mengubah, dan menghapus schedule.
+### Upcoming Features (Sprint 3)
+1. Time Calculator
+   - User dapat melihat total waktu perjalanan setelah mengisi form time calculator.
 2. Traveling Method
-    - User dapat memilih traveling method untuk mendukung kalkulasi waktu perjalanan
+   - User dapat mengetahui rekomendasi waktu keberangkatan dan lamanya waktu aktivitas berdasarkan traveling method yang dipilih.
