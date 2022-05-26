@@ -138,11 +138,6 @@ public class WebController {
         return "createUser";
     }
 
-    @GetMapping("/calendar")
-    public String getCalendar(Model model) {
-        return "calendar";
-    }
-
     @GetMapping("/logout")
     public String logout() {
         token.setRefreshToken(null);
@@ -172,13 +167,13 @@ public class WebController {
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
         var checkStartTime = restTemplate.exchange(
-                "api/schedule/checkSchedTime/" + dto.getStartTime(), HttpMethod.GET, requestEntity, Boolean.class);
+                "api/schedule/filter/" + dto.getStartTime(), HttpMethod.GET, requestEntity, Boolean.class);
         if (Boolean.FALSE.equals(checkStartTime.getBody())) {
             redirectAttributes.addFlashAttribute("date", "You already have a schedule with that start time, please try again.");
             return "redirect:/createSchedule";
         }
 
-        var response = restTemplate.postForEntity("api/schedule/createSchedule", request, Map.class);
+        var response = restTemplate.postForEntity("api/schedule/", request, Map.class);
         return "redirect:/";
     }
 
