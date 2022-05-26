@@ -1,5 +1,3 @@
-autocompletestart.addListener("place_changed", calculateTime);
-autocompletedest.addListener("place_changed", calculateTime);
 document.getElementById("travel-mode").addEventListener("change", calculateTime);
 function calculateTime() {
     var startingLoc = document.getElementById("startingloc").value;

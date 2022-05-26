@@ -1,5 +1,5 @@
-let autocompletestart;
-let autocompletedest;
+var autocompletestart;
+var autocompletedest;
 function initAutocomplete() {
     autocompletestart = new google.maps.places.Autocomplete(
         document.getElementById('startingloc'),
@@ -16,4 +16,7 @@ function initAutocomplete() {
             componentRestrictions: {'country': ['IDN']},
             fields: ['places_id', 'geometry', 'name']
         });
+
+    autocompletestart.addListener("place_changed", calculateTime);
+    autocompletedest.addListener("place_changed", calculateTime);
 }
