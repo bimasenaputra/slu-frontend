@@ -54,7 +54,7 @@ public class WebController {
                         headers.set(HttpHeaders.COOKIE, token.getCookieRefresh());
                         HttpEntity<String> request = new HttpEntity<>("refreshToken", headers);
                         @SuppressWarnings("unchecked")
-                        var response = restTemplate.postForEntity("api/account/refresh",request,(Class<Map<String,Object>>)(Class)Map.class);
+                        var response = restTemplate.postForEntity("api/account/auth/refresh",request,(Class<Map<String,Object>>)(Class)Map.class);
                         token.setToken(CookieExtractor.extract(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)));
                         return getAuthenticatedHome(model);
                     } catch (HttpClientErrorException ex) {
