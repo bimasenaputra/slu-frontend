@@ -239,10 +239,25 @@ public class WebController {
     }
 
     @PostMapping("/schedule/{id}/update")
-    public String updateSchedulePost(@PathVariable String id, @ModelAttribute("schedule") ScheduleDTO schedule) {
+    public String updateSchedulePost(@PathVariable String id, @ModelAttribute("schedule") ScheduleDTO schedule, RedirectAttributes redirectAttributes) {
         HttpHeaders headers = HttpHeadersBuilder.build();
         if (!token.idTokenIsEmpty()) headers.set(HttpHeaders.COOKIE, token.getCookie());
         HttpEntity<ScheduleDTO> request = new HttpEntity<>(schedule, headers);
+
+        if (schedule.getStartTime().compareTo(schedule.getEndTime()) > 0) {
+            redirectAttributes.addFlashAttribute("date", "Start time must be earlier than end time, please try again.");
+            return "redirect:/schedule/" + id + "/update";
+        }
+
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+        var checkStartTime = restTemplate.exchange(
+                "api/schedule/filter/" + schedule.getStartTime() + "/" + schedule.getId(), HttpMethod.GET, requestEntity, Boolean.class);
+        if (Boolean.FALSE.equals(checkStartTime.getBody())) {
+            redirectAttributes.addFlashAttribute("date", "You already have a schedule with that start time, please try again.");
+            return "redirect:/schedule/" + id + "/update";
+        }
+
+
         try {
             restTemplate.exchange("api/schedule/"+id, HttpMethod.PUT, request, Void.class);
             return "redirect:/";
