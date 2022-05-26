@@ -1,36 +1,35 @@
+autocompletestart.addListener("place_changed", calculateTime);
+autocompletedest.addListener("place_changed", calculateTime);
+document.getElementById("travel-mode").addEventListener("change", calculateTime);
 function calculateTime() {
     var startingLoc = document.getElementById("startingloc").value;
     var destination = document.getElementById("destination").value;
 
-    if(startingLoc === "" || destination === "") {
-        var result = document.getElementById("result");
-        result.value = "Please fill out Origin and Destination field";
-        return;
-    }
+    if(startingLoc !== "" && destination !== "") {
+        var travelMode;
+        var selectedTravelMode = document.getElementById("travel-mode").value;
+        if (selectedTravelMode === "driving") {
+            travelMode = google.maps.TravelMode.DRIVING;
+        } else if (selectedTravelMode === "walking") {
+            travelMode = google.maps.TravelMode.WALKING;
+        } else if (selectedTravelMode === "bicycling") {
+            travelMode = google.maps.TravelMode.BICYCLING;
+        } else {
+            return;
+        }
 
-    var travelMode;
-    var selectedTravelMode = document.getElementById("travel-mode").value;
-    if (selectedTravelMode === "driving") {
-        travelMode = google.maps.TravelMode.DRIVING;
-    } else if (selectedTravelMode === "walking") {
-        travelMode = google.maps.TravelMode.WALKING;
-    } else if (selectedTravelMode === "bicycling") {
-        travelMode = google.maps.TravelMode.BICYCLING;
-    } else {
-        return;
+        var service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix(
+            {
+                origins: [startingLoc],
+                destinations: [destination],
+                travelMode: travelMode,
+                avoidHighways: false,
+                avoidTolls: false,
+            },
+            callback
+        );
     }
-
-    var service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix(
-        {
-            origins: [startingLoc],
-            destinations: [destination],
-            travelMode: travelMode,
-            avoidHighways: false,
-            avoidTolls: false,
-        },
-        callback
-    );
 }
 function callback(response, status) {
     if(status==="OK") {
